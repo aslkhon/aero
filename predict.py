@@ -45,8 +45,8 @@ def main(args):
 
     print(args)
     model = _load_model(args)
-    device = torch.device('cuda')
-    model.cuda()
+    device = torch.device(args.device)
+    model.to(device)
     filename = args.filename
     file_basename = Path(filename).stem
     output_dir = args.output

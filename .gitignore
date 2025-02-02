@@ -129,3 +129,12 @@ dmypy.json
 .pyre/
 
 slurm-*.out
+
+# Ignore macOS specific files
+*DS_Store*
+
+# Ignore temporary work files
+audio/
+
+# Folder with model checkpoints
+outputs/

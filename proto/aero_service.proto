@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package aero;
+
+service AeroEnhancement {
+  // Bi-directional streaming: client sends chunks, server returns enhanced chunks
+  rpc EnhanceStream (stream AudioChunk) returns (stream EnhancedAudioChunk);
+}
+
+message AudioChunk {
+  bytes samples = 1;       // PCM audio bytes (16-bit or float)
+  int32 sample_rate = 2;   // e.g., 8000
+  bool eou = 3;            // End-of-utterance flag (true when speech ends)
+}
+
+message EnhancedAudioChunk {
+  bytes samples = 1;       // Enhanced PCM audio bytes
+  int32 sample_rate = 2;   // Output sample rate
+  bool is_final = 3;       // Indicates if this is the final full enhanced audio
+}

@@ -138,3 +138,7 @@ audio/
 
 # Folder with model checkpoints
 outputs/
+
+# Ignore IDE specific files
+.vscode/
+.idea/

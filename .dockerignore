@@ -1,0 +1,7 @@
+__pycache__/
+.vscode/
+audio/
+outputs/
+venv/
+*DS_Store*
+.git

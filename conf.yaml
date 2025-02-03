@@ -1,5 +1,3 @@
-checkpoint_file: outputs/8-16/aero-nfft=512-hl=256/checkpoint.th
-
 device: cpu
 
 experiment:

@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import time
 import grpc
@@ -68,9 +69,11 @@ class AeroEnhancementServicer(aero_service_pb2_grpc.AeroEnhancementServicer):
 
 
 def load_model(config: dict):
-    checkpoint_path = Path(config.checkpoint_file)
+    checkpoint_path = os.getenv("CHECKPOINT_PATH")
+    if not checkpoint_path:
+        raise ValueError("CHECKPOINT_FILE environment variable not set!")
     model = modelFactory.get_model(config)["generator"]
-    package = torch.load(checkpoint_path, config.device)
+    package = torch.load(Path(checkpoint_path), config.device)
 
     model.load_state_dict(
         package[SERIALIZE_KEY_MODELS]["generator"][SERIALIZE_KEY_STATE]

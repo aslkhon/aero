@@ -14,6 +14,8 @@ from src.model_serializer import (
     SERIALIZE_KEY_STATE,
 )
 
+now = 0
+
 
 class AeroEnhancementServicer(aero_service_pb2_grpc.AeroEnhancementServicer):
     def __init__(self, model, device):
@@ -29,6 +31,7 @@ class AeroEnhancementServicer(aero_service_pb2_grpc.AeroEnhancementServicer):
         speech_buffer = []  # Stores all enhanced chunks for final full audio
 
         for chunk in request_iterator:
+            now = time.time()
             # 1. Convert bytes to tensor
             audio_data = torch.frombuffer(chunk.samples, dtype=torch.int16)
             audio_data = (
@@ -57,8 +60,12 @@ class AeroEnhancementServicer(aero_service_pb2_grpc.AeroEnhancementServicer):
 
             # 6. If the client signals "EOU", send full enhanced speech back
             if chunk.eou:
+                print("start enhancing last chunk")
+                print(now)
                 full_speech = b"".join(speech_buffer)  # Concatenate all buffered chunks
 
+                print("sending full enhanced speech")
+                print(time.time())
                 yield aero_service_pb2.EnhancedAudioChunk(
                     samples=full_speech, sample_rate=16000, is_final=True
                 )

@@ -3,6 +3,8 @@ import wave
 import time
 from proto import aero_service_pb2, aero_service_pb2_grpc
 
+now = 0
+last = 0
 
 def audio_chunk_generator(file_path, chunk_frames=1280):
     """
@@ -25,6 +27,10 @@ def audio_chunk_generator(file_path, chunk_frames=1280):
             yield aero_service_pb2.AudioChunk(
                 samples=frames, sample_rate=sample_rate, eou=is_last
             )
+            if is_last:
+                now = time.time()
+                print("sending last chunk for enhancement")
+                print(now)
             time.sleep(0.16)
 
 
@@ -45,9 +51,15 @@ def run_client(file_path):
 
     for response in response_iterator:
         if response.is_final:
+            print("last enhanced chunk received")
+            print(last)
+            print("Received full enhanced speech.")
+            print(time.time())
             full_enhanced_audio = response.samples  # Store final, complete utterance
         else:
-            print("Streaming enhanced chunk...")
+            # print("Streaming enhanced chunk...")
+            last = time.time()
+            
 
     return full_enhanced_audio
 
@@ -74,7 +86,5 @@ if __name__ == "__main__":
     enhanced_audio = run_client(input_file)
 
     # Save the enhanced audio with a proper WAV header
-    save_wav(
-        "enhanced_audio.wav", enhanced_audio, sample_rate=16000, channels=1, sampwidth=2
-    )
+    save_wav("enhanced_audio.wav", enhanced_audio, sample_rate=16000, channels=1, sampwidth=2)
     print("Enhanced audio saved as 'enhanced_audio.wav'")
